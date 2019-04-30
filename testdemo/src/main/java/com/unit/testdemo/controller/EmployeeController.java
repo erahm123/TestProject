@@ -19,13 +19,19 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.unit.testdemo.entity.Employee;
 import com.unit.testdemo.service.EmployeeService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 @RestController
 @RequestMapping("/emp")
+@Api(value="Employee Management System", description="Operations pertaining to employee in Employee Management System")
 public class EmployeeController {
 
 	@Autowired
 	EmployeeService employeeService;
 
+	@ApiOperation(value = "get all employee", response = List.class)
 	@GetMapping(value = "/get", headers = "Accept=application/json")
 	public List<Employee> getAllEmployee() {
 
@@ -33,16 +39,18 @@ public class EmployeeController {
 
 		return employee;
 	}
-
+	
+	@ApiOperation(value = "add employee")
 	@PostMapping(value = "/add", headers = "Accept=application/json")
-	public ResponseEntity<String> addEmployee(@RequestBody Employee employee, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<String> addEmployee(@ApiParam(value = "Employee object store in database table", required = true)@RequestBody Employee employee, UriComponentsBuilder ucBuilder) {
 		employeeService.addEmployee(employee);
 		return new ResponseEntity<String>("" + employee.getId(), HttpStatus.CREATED);
 
 	}
 
+	@ApiOperation(value = "delete employee by id")
 	@DeleteMapping(value = "/{id}", headers = "Accept ")
-	public ResponseEntity<Void> deleteEmployeeById(@PathVariable("id") long id) {
+	public ResponseEntity<Void> deleteEmployeeById(@ApiParam(value = "delete employee", required = true) @PathVariable("id") long id) {
 
 		Optional<Employee> employee = employeeService.findById(id);
 		if (employee == null) {
@@ -52,8 +60,9 @@ public class EmployeeController {
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
+	@ApiOperation(value = "update employee")
 	@PutMapping(value = "/update", headers = "Accept=application/json")
-	public ResponseEntity<String> updateUser(@RequestBody Employee employee) {
+	public ResponseEntity<String> updateUser(@ApiParam(value = "update employee", required = true)@RequestBody Employee employee) {
 		Optional<Employee> user = employeeService.findById(employee.getId());
 		if (user == null) {
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
