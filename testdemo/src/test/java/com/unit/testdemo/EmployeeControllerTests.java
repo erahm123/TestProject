@@ -19,6 +19,7 @@ import com.unit.testdemo.controller.EmployeeController;
 import com.unit.testdemo.dto.EmployeeRequestDTO;
 import com.unit.testdemo.dto.EmployeeResponseDTO;
 import com.unit.testdemo.entity.Employee;
+import com.unit.testdemo.queue.config.EmployeeMessageSender;
 import com.unit.testdemo.service.EmployeeService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,6 +27,9 @@ public class EmployeeControllerTests {
 
 	@Mock
 	EmployeeService employeeService;
+	
+	@Mock
+	EmployeeMessageSender employeeMessageSenderMock ;
 
 	@InjectMocks
 	EmployeeController employeeController = new EmployeeController();
@@ -40,11 +44,8 @@ public class EmployeeControllerTests {
 		employee.setId(1L);
 		employee.setEmployeeCode("A");
 		Mockito.doNothing().when(employeeService).addEmployee(employee);
-		ResponseEntity<String> responseEntity = employeeController.addEmployee(employee);
+		ResponseEntity<String> responseEntity = employeeController.addEmployee(employee,"emp");
 		assertEquals("1", responseEntity.getBody());
-		
-		System.out.println(responseEntity.getStatusCode());
-		System.out.println(responseEntity.getBody());
 
 	}
 
@@ -57,9 +58,8 @@ public class EmployeeControllerTests {
 		EmployeeResponseDTO emp1 = new EmployeeResponseDTO(2, "nets", "nets1", "B", "tst");
 		empList.add(emp);
 		empList.add(emp1);
-		
 		Mockito.when(employeeService.getAllEmployee()).thenReturn(empList);
-		List<EmployeeResponseDTO> responseEntity = employeeController.getAllEmployee();
+		List<EmployeeResponseDTO> responseEntity = employeeController.getAllEmployee("msg");
 		assertEquals(2, responseEntity.size());
 		
 
@@ -72,9 +72,7 @@ public class EmployeeControllerTests {
 		
 		Mockito.when(employeeService.updateEmployee(emp1)).thenReturn(emp1);
 
-		ResponseEntity<String> responseEntity =employeeController.updateEmployee(emp1);
-		System.out.println(responseEntity.getStatusCode());
-		System.out.println(responseEntity.getBody());
+		ResponseEntity<String> responseEntity =employeeController.updateEmployee(emp1,"msg");
 
 	}
 	
