@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.unit.testdemo.dto.EmployeeRequestDTO;
 import com.unit.testdemo.entity.Employee;
 import com.unit.testdemo.repository.EmployeeRepository;
 import com.unit.testdemo.service.EmployeeService;
@@ -42,7 +43,7 @@ public class EmployeeServiceTests {
 
 	@Test
 	public void testAddEmployee() {
-		Employee emp = new Employee(3, "nets", "nets1", "B", "tst");
+		EmployeeRequestDTO emp = new EmployeeRequestDTO(3, "nets", "nets1", "B", "tst");
 		employeeServiceMock.addEmployee(emp);
 		// verify(employeeRepository,times(1)).saveAndFlush(emp);
 	}
@@ -59,7 +60,7 @@ public class EmployeeServiceTests {
 	public void testUpdateEmployee() {
 		Employee emp1 = new Employee(2, "nets", "nets1", "B", "tst");
 
-		employeeServiceMock.updateEmployee(emp1, emp1.getId());
+		employeeServiceMock.updateEmployee(emp1);
 		verify(employeeRepository, times(1)).saveAndFlush(emp1);
 
 	}

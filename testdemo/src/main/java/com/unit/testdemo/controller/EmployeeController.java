@@ -14,18 +14,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
-
+import com.unit.testdemo.dto.EmployeeRequestDTO;
+import com.unit.testdemo.dto.EmployeeResponseDTO;
 import com.unit.testdemo.entity.Employee;
 import com.unit.testdemo.service.EmployeeService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/emp")
-@Api(value="Employee Management System", description="Operations pertaining to employee in Employee Management System")
+@Api(value = "Employee Management System", description = "Operations pertaining to employee in Employee Management System")
 public class EmployeeController {
 
 	@Autowired
@@ -33,16 +34,18 @@ public class EmployeeController {
 
 	@ApiOperation(value = "get all employee", response = List.class)
 	@GetMapping(value = "/get", headers = "Accept=application/json")
-	public List<Employee> getAllEmployee() {
+	public List<EmployeeResponseDTO> getAllEmployee() {
 
-		List<Employee> employee = employeeService.getAllEmployee();
-
+		log.info("employee fetch  ctrl :: START ");
+		List<EmployeeResponseDTO> employee = employeeService.getAllEmployee();
+		log.info("employee fetch ctrl :: END ");
 		return employee;
 	}
-	
+
 	@ApiOperation(value = "add employee")
 	@PostMapping(value = "/add", headers = "Accept=application/json")
-	public ResponseEntity<String> addEmployee(@ApiParam(value = "Employee object store in database table", required = true)@RequestBody Employee employee, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<String> addEmployee(
+			@ApiParam(value = "Employee object store in database table", required = true) @RequestBody EmployeeRequestDTO employee) {
 		employeeService.addEmployee(employee);
 		return new ResponseEntity<String>("" + employee.getId(), HttpStatus.CREATED);
 
@@ -50,25 +53,30 @@ public class EmployeeController {
 
 	@ApiOperation(value = "delete employee by id")
 	@DeleteMapping(value = "/{id}", headers = "Accept ")
-	public ResponseEntity<Void> deleteEmployeeById(@ApiParam(value = "delete employee", required = true) @PathVariable("id") long id) {
+	public ResponseEntity<Void> deleteEmployeeById(
+			@ApiParam(value = "delete employee", required = true) @PathVariable("id") long id) {
 
-		Optional<Employee> employee = employeeService.findById(id);
+		List<EmployeeResponseDTO> employee = employeeService.findById(id);
 		if (employee == null) {
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
 		}
-		employeeService.deleteEmployeeById(id);
+		
+		employeeService.deleteEmployeeById(employee.get(0).getId());
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "update employee")
 	@PutMapping(value = "/update", headers = "Accept=application/json")
-	public ResponseEntity<String> updateUser(@ApiParam(value = "update employee", required = true)@RequestBody Employee employee) {
-		Optional<Employee> user = employeeService.findById(employee.getId());
-		if (user == null) {
+	public ResponseEntity<String> updateEmployee(
+			@ApiParam(value = "update employee", required = true) @RequestBody Employee employee) {
+		List<EmployeeResponseDTO> empList = employeeService.findById(employee.getId());
+		if (empList == null) {
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		}else
+		{
+			employeeService.updateEmployee(employee);
 		}
-		employeeService.updateEmployee(employee, employee.getId());
 		return new ResponseEntity<String>(HttpStatus.OK);
+		}
 	}
 
-}

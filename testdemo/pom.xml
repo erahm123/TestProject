@@ -23,7 +23,7 @@
 		<wiremock.version>1.18</wiremock.version>
 		<jackson-core>2.9.8</jackson-core>
 	</properties>
-        <!-- dependencies -->
+	<!-- dependencies -->
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -65,13 +65,11 @@
 			<version>${swagger.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson-core}</version>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>2.3.0</version>
 		</dependency>
-
 
 	</dependencies>
 
