@@ -5,6 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.unit.testdemo.dto.EmployeeRequestDTO;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class EmployeeMessageSender {
 
@@ -17,7 +22,10 @@ public class EmployeeMessageSender {
 	@Value("emp.routingkey")
 	private String routingkey;
 
-	public void send(String message) {
+	public void send(EmployeeRequestDTO message) {
+		
+		log.info("Send Message start:" + message.getId());
 		rabbitTemplate.convertAndSend(exchange, routingkey, message);
+		log.info("Send Message end:" + message.getId());
 	}
 }

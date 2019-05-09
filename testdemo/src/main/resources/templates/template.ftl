@@ -1,0 +1,11 @@
+<html>
+<head>
+  <title>Welcome!</title>
+</head>
+<body>
+  ${employee.firstName}
+  ${employee.lastName}
+  ${employee.designation}
+  ${employee.employeeCode}
+</body>
+</html>

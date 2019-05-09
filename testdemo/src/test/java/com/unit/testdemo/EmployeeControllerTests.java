@@ -1,9 +1,12 @@
 package com.unit.testdemo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.http.client.MockClientHttpResponse;
+import org.springframework.test.web.client.response.DefaultResponseCreator;
+import org.springframework.test.web.client.response.MockRestResponseCreators;
 
 import com.unit.testdemo.controller.EmployeeController;
 import com.unit.testdemo.dto.EmployeeRequestDTO;
@@ -44,7 +51,7 @@ public class EmployeeControllerTests {
 		employee.setId(1L);
 		employee.setEmployeeCode("A");
 		Mockito.doNothing().when(employeeService).addEmployee(employee);
-		ResponseEntity<String> responseEntity = employeeController.addEmployee(employee,"emp");
+		ResponseEntity<String> responseEntity = employeeController.addEmployee(employee);
 		assertEquals("1", responseEntity.getBody());
 
 	}
@@ -59,7 +66,7 @@ public class EmployeeControllerTests {
 		empList.add(emp);
 		empList.add(emp1);
 		Mockito.when(employeeService.getAllEmployee()).thenReturn(empList);
-		List<EmployeeResponseDTO> responseEntity = employeeController.getAllEmployee("msg");
+		List<EmployeeResponseDTO> responseEntity = employeeController.getAllEmployee();
 		assertEquals(2, responseEntity.size());
 		
 
@@ -69,11 +76,30 @@ public class EmployeeControllerTests {
 	public void testUpdateEmployee() {
 		
 		Employee emp1 = new Employee(2, "nets", "nets1", "B", "tst");
-		
 		Mockito.when(employeeService.updateEmployee(emp1)).thenReturn(emp1);
+		ResponseEntity<String> responseEntity =employeeController.updateEmployee(emp1);
 
-		ResponseEntity<String> responseEntity =employeeController.updateEmployee(emp1,"msg");
+	}
+	
+	@Test
+	public void testCreate() throws Exception
+	{
+		URI location = new URI("/add");
+		DefaultResponseCreator responseCreator = MockRestResponseCreators.withCreatedEntity(location);
+		MockClientHttpResponse response = (MockClientHttpResponse) responseCreator.createResponse(null);
 
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertEquals(location, response.getHeaders().getLocation());
+	}
+	
+	@Test
+	public void testServerError() throws Exception
+	{
+		DefaultResponseCreator responseCreator = MockRestResponseCreators.withServerError();
+		MockClientHttpResponse response = (MockClientHttpResponse) responseCreator.createResponse(null);
+		
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+		assertTrue(response.getHeaders().isEmpty());
 	}
 	
 }
