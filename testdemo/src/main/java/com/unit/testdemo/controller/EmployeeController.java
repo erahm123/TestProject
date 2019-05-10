@@ -57,6 +57,10 @@ public class EmployeeController {
 	@PostMapping(value = "/add", headers = "Accept=application/json")
 	public ResponseEntity<String> addEmployee(
 			@ApiParam(value = "Employee object store in database table", required = true) @RequestBody EmployeeRequestDTO employee) {
+		if(employee == null)
+		{
+			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		}
 		employeeService.addEmployee(employee);
 		employeeMessageProducer.send(employee);
 		return new ResponseEntity<String>("" + employee.getId(), HttpStatus.CREATED);

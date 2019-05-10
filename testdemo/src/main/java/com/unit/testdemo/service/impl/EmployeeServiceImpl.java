@@ -70,8 +70,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public Employee updateEmployee(Employee employee) {
 		
-		//ModelMapper mapper = new ModelMapper();
-		//Employee empl = mapper.map(employee, Employee.class);
 		return employeeRepository.saveAndFlush(employee);
 	}
 
